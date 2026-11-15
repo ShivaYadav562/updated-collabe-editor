@@ -20,6 +20,7 @@ const app = express();
 //  CORS 
 
 const allowedOrigins = [
+  "https://updated-collabe-editor-7kwu.vercel.app",
   "https://collab-editor-client.vercel.app", // Production
   "https://collab-editor-client-t4o8.vercel.app", // Preview
   "http://localhost:5173",
