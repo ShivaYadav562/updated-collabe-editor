@@ -105,7 +105,7 @@ function StudySidebar({
           `}
         >
           <GraduationCap size={18} />
-          Explore Courses
+          Explore Resources
           <ChevronRight size={16} className="ml-auto" />
         </button>
 

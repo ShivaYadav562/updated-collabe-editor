@@ -14,7 +14,7 @@ function SearchBar({ search, onSearchChange }) {
         type="text"
         value={search}
         onChange={(event) => onSearchChange(event.target.value)}
-        placeholder="Search DSA, Java, AWS, DevOps..."
+        placeholder="Search Resources: DSA, Java, AWS, DevOps..."
         className="w-full bg-transparent text-sm text-[#26323c] outline-none placeholder:text-[#a1a7af]"
       />
 

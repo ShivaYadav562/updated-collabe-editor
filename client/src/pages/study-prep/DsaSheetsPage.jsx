@@ -147,8 +147,8 @@ export default function DsaSheetsPage() {
   };
 
   return (
-   
-    <div className="min-h-screen bg-[#f8faf9]  text-slate-800">    
+
+    <div className="min-h-screen bg-black  text-white">
       <div className="mx-auto max-w-[1500px] p-4 sm:p-6 lg:p-8">
 
         {/* PAGE HEADER */}
@@ -171,11 +171,11 @@ export default function DsaSheetsPage() {
             </span>
           </div>
 
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
             DSA Patterns Sheet
           </h1>
 
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
             Master Data Structures and Algorithms through structured
             coding patterns and LeetCode practice.
           </p>
@@ -186,33 +186,33 @@ export default function DsaSheetsPage() {
           <StatCard
             label="Total Patterns"
             value={dsaPatterns.length}
-            icon="▤"
+            icon="#"
           />
           <StatCard
             label="Categories"
             value={dsaCategories.length}
-            icon="▦"
+            icon="C"
           />
           <StatCard
             label="Total Problems"
             value={totalProblems}
-            icon="⌘"
+            icon="P"
           />
           <StatCard
             label="Solved Problems"
             value={`${solvedCount}/${totalProblems}`}
-            icon="✓"
+            icon="S"
           />
         </div>
 
         {/* OVERALL PROGRESS */}
-        <div className="mb-7 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+        <div className="mb-7 rounded-2xl border border-[#303030] bg-[#1c1c1c] p-5 shadow-sm">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="font-semibold text-slate-900">
+              <h2 className="font-semibold text-white">
                 Your Overall Progress
               </h2>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-slate-300">
                 Keep practicing to complete your DSA journey.
               </p>
             </div>
@@ -222,14 +222,14 @@ export default function DsaSheetsPage() {
             </span>
           </div>
 
-          <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-3 overflow-hidden rounded-full bg-[#303030]">
             <div
               className="h-full rounded-full bg-emerald-500 transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
 
-          <div className="mt-2 flex justify-between text-xs text-slate-500">
+          <div className="mt-2 flex justify-between text-xs text-slate-300">
             <span>{solvedCount} completed</span>
             <span>{totalProblems - solvedCount} remaining</span>
           </div>
@@ -256,14 +256,14 @@ export default function DsaSheetsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search patterns or LeetCode questions..."
-              className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              className="w-full rounded-xl border border-[#303030] bg-[#1c1c1c] py-3 pl-11 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
           </div>
 
           <select
             value={activeCategory}
             onChange={(e) => setActiveCategory(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-500"
+            className="rounded-xl border border-[#303030] bg-[#1c1c1c] px-4 py-3 text-sm outline-none focus:border-emerald-500"
           >
             <option value="All">All Categories</option>
             {dsaCategories.map((category) => (
@@ -278,15 +278,15 @@ export default function DsaSheetsPage() {
             className={`rounded-xl border px-4 py-3 text-sm font-medium transition ${
               showSolvedOnly
                 ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                : "border-[#303030] bg-[#1c1c1c] text-slate-300 hover:bg-[#242424]"
             }`}
           >
-            {showSolvedOnly ? "✓ Solved Only" : "Show Solved"}
+            {showSolvedOnly ? "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ Solved Only" : "Show Solved"}
           </button>
 
           <button
             onClick={resetProgress}
-            className="rounded-xl border border-red-100 bg-white px-4 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50"
+            className="rounded-xl border border-red-100 bg-[#1c1c1c] px-4 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50"
           >
             Reset Progress
           </button>
@@ -296,8 +296,8 @@ export default function DsaSheetsPage() {
        <div className="grid grid-cols-1 items-start gap-6 lg:h-[calc(100vh-220px)] lg:min-h-0 lg:grid-cols-[280px_minmax(0,1fr)]">
 
           {/* CATEGORY SIDEBAR */}
-        <aside className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:h-full lg:overflow-y-auto hide-scrollbar">
-            <h2 className="mb-4 text-sm font-bold text-slate-900">
+        <aside className="rounded-2xl border border-[#303030] bg-[#1c1c1c] p-4 shadow-sm lg:h-full lg:overflow-y-auto hide-scrollbar">
+            <h2 className="mb-4 text-sm font-bold text-white">
               DSA Categories
             </h2>
 
@@ -306,7 +306,7 @@ export default function DsaSheetsPage() {
               className={`mb-2 flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition ${
                 activeCategory === "All"
                   ? "bg-emerald-50 font-semibold text-emerald-700"
-                  : "text-slate-600 hover:bg-slate-50"
+                  : "text-slate-300 hover:bg-[#242424]"
               }`}
             >
               <span>All Patterns</span>
@@ -330,7 +330,7 @@ export default function DsaSheetsPage() {
                     className={`w-full rounded-xl px-3 py-3 text-left transition ${
                       isActive
                         ? "bg-emerald-50 text-emerald-700"
-                        : "text-slate-600 hover:bg-slate-50"
+                        : "text-slate-300 hover:bg-[#242424]"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -343,7 +343,7 @@ export default function DsaSheetsPage() {
                       </span>
                     </div>
 
-                    <div className="mt-2 h-1 overflow-hidden rounded-full bg-slate-100">
+                    <div className="mt-2 h-1 overflow-hidden rounded-full bg-[#303030]">
                       <div
                         className="h-full rounded-full bg-emerald-500"
                         style={{
@@ -366,24 +366,24 @@ export default function DsaSheetsPage() {
           <section className="lg:h-full lg:overflow-y-auto lg:pr-2 hide-scrollbar">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h2 className="text-lg font-bold text-slate-900">
+                <h2 className="text-lg font-bold text-white">
                   {activeCategory === "All"
                     ? "All DSA Patterns"
                     : activeCategory}
                 </h2>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-slate-300">
                   {filteredPatterns.length} patterns found
                 </p>
               </div>
             </div>
 
             {filteredPatterns.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-16 text-center">
-                <div className="mb-3 text-3xl">🔍</div>
-                <h3 className="font-semibold text-slate-800">
+              <div className="rounded-2xl border border-dashed border-[#404040] bg-[#1c1c1c] px-5 py-16 text-center">
+                <div className="mb-3 text-3xl">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â</div>
+                <h3 className="font-semibold text-white">
                   No patterns found
                 </h3>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-slate-300">
                   Try another search or category.
                 </p>
                 <button
@@ -407,7 +407,7 @@ export default function DsaSheetsPage() {
                   return (
                     <div
                       key={pattern.number}
-                      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-emerald-200"
+                      className="overflow-hidden rounded-2xl border border-[#303030] bg-[#1c1c1c] shadow-sm transition hover:border-emerald-200"
                     >
                       {/* PATTERN HEADER */}
                       <button
@@ -424,7 +424,7 @@ export default function DsaSheetsPage() {
 
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-sm font-bold text-slate-800">
+                            <h3 className="text-sm font-bold text-white">
                               {pattern.title}
                             </h3>
 
@@ -440,7 +440,7 @@ export default function DsaSheetsPage() {
                           </p>
 
                           <div className="mt-2 flex items-center gap-2">
-                            <div className="h-1.5 w-28 overflow-hidden rounded-full bg-slate-100">
+                            <div className="h-1.5 w-28 overflow-hidden rounded-full bg-[#303030]">
                               <div
                                 className="h-full rounded-full bg-emerald-500"
                                 style={{
@@ -462,9 +462,9 @@ export default function DsaSheetsPage() {
 
                       {/* PROBLEM LIST */}
                       {isExpanded && (
-                        <div className="border-t border-slate-100 bg-slate-50/70 p-4 sm:p-5">
+                        <div className="border-t border-[#303030] bg-[#242424] p-4 sm:p-5">
                           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                            <h4 className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                            <h4 className="text-xs font-bold uppercase tracking-wide text-slate-300">
                               Practice Questions
                             </h4>
 
@@ -486,8 +486,8 @@ export default function DsaSheetsPage() {
                                   key={key}
                                   className={`flex items-center gap-3 rounded-xl border p-3 transition ${
                                     isSolved
-                                      ? "border-emerald-100 bg-emerald-50/70"
-                                      : "border-slate-200 bg-white hover:border-emerald-200"
+                                      ? "border-[#303030] bg-emerald-50/70"
+                                      : "border-[#303030] bg-[#1c1c1c] hover:border-emerald-200"
                                   }`}
                                 >
                                   <input
@@ -505,7 +505,7 @@ export default function DsaSheetsPage() {
                                       className={`text-sm font-medium ${
                                         isSolved
                                           ? "text-emerald-700"
-                                          : "text-slate-700"
+                                          : "text-slate-200"
                                       }`}
                                     >
                                       <span className="mr-2 text-xs text-slate-400">
@@ -530,7 +530,7 @@ export default function DsaSheetsPage() {
   />
   Solve
   </a>
-                                
+
                                 </div>
                               );
                             })}
@@ -561,16 +561,16 @@ function getSlug(title) {
 // Reusable statistics card
 function StatCard({ label, value, icon }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+    <div className="rounded-2xl border border-[#303030] bg-[#1c1c1c] p-4 shadow-sm sm:p-5">
       <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-lg font-bold text-emerald-600">
         {icon}
       </div>
 
-      <p className="text-xl font-bold text-slate-900 sm:text-2xl">
+      <p className="text-xl font-bold text-white sm:text-2xl">
         {value}
       </p>
 
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-slate-400">
         {label}
       </p>
     </div>

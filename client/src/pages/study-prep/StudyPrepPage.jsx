@@ -226,7 +226,7 @@ function StudyPrepPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8faf9] text-[#17212b]">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-[#e7e9ec] bg-white/95 backdrop-blur-xl">
         <div className="flex h-[72px] items-center justify-between px-5 sm:px-8">
@@ -300,7 +300,7 @@ function StudyPrepPage() {
             </button>
           </div>
 
-          {/* Explore Courses */}
+          {/* Explore Resources */}
           <button
             type="button"
             onClick={() => handleSidebarClick("All Courses")}
@@ -311,7 +311,7 @@ function StudyPrepPage() {
             }`}
           >
             <GraduationCap size={18} />
-            Explore Courses
+            Explore Resources
             <ChevronRight size={16} className="ml-auto" />
           </button>
 
@@ -384,29 +384,29 @@ function StudyPrepPage() {
           {isCoursePage && (
             <>
               {/* Hero Section */}
-              <section className="relative mb-10 overflow-hidden rounded-2xl border border-[#e1e8e2] bg-gradient-to-r from-[#edf8ef] via-white to-[#eef5ff] p-6 sm:p-9">
-                <div className="pointer-events-none absolute -right-16 -top-28 h-72 w-72 rounded-full bg-green-200/40 blur-3xl" />
+              <section className="relative mb-10 overflow-hidden rounded-2xl border border-[#303030] bg-[#1c1c1c] p-6 sm:p-9">
+                <div className="pointer-events-none absolute -right-16 -top-28 h-72 w-72 rounded-full bg-green-500/10 blur-3xl" />
 
                 <div className="relative z-10 max-w-2xl">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-[#dce9df] bg-white/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#308d46]">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-[#404040] bg-[#303030] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#308d46]">
                     <Sparkles size={13} />
                     HELLO, ENGINEER!
                   </span>
 
-                  <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-[#17212b] sm:text-4xl">
+                  <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
                     Toh chalo,
                     <span className="text-[#308d46]">
                       {" "}shuru karte hain!
                     </span>
                   </h2>
 
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-[#64707c] sm:text-base">
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
                     Aaj kuch naya seekhte hain, thodi practice karte hain
                     aur har din apne aap ko better banate hain. Yahan learning
                     sabke liye 100% free hai!
                   </p>
 
-                  <div className="mt-6 flex flex-wrap gap-5 text-xs font-medium text-[#66717b]">
+                  <div className="mt-6 flex flex-wrap gap-5 text-xs font-medium text-slate-300">
                     <span className="flex items-center gap-2">
                       <BookOpen size={15} className="text-[#308d46]" />
                       Seekho, Practice Karo
@@ -419,8 +419,8 @@ function StudyPrepPage() {
                   </div>
                 </div>
 
-                <div className="pointer-events-none absolute bottom-[-35px] right-12 hidden h-48 w-48 items-center justify-center rounded-full border-[18px] border-white/50 bg-white/20 lg:flex">
-                  <div className="flex h-28 w-28 items-center justify-center rounded-3xl border border-white bg-white/70 text-[#308d46] shadow-xl">
+                <div className="pointer-events-none absolute bottom-[-35px] right-12 hidden h-48 w-48 items-center justify-center rounded-full border-[18px] border-[#404040] bg-[#242424] lg:flex">
+                  <div className="flex h-28 w-28 items-center justify-center rounded-3xl border border-[#404040] bg-[#303030] text-[#308d46] shadow-xl">
                     <GraduationCap size={65} strokeWidth={1.3} />
                   </div>
                 </div>
@@ -431,16 +431,16 @@ function StudyPrepPage() {
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                   <div>
                     <h2 className="text-2xl font-bold tracking-tight text-[#17212b]">
-                      Find Your Learning Path
+                      Explore Learning Resources
                     </h2>
 
                     <p className="mt-1.5 text-sm text-[#7b8490]">
-                      Choose a course and start learning at your own pace.
+                      Choose a resource and start learning at your own pace.
                     </p>
                   </div>
 
                   <span className="text-sm font-medium text-[#7b8490]">
-                    {filteredCourses.length} Courses Available
+                    {filteredCourses.length} Resources Available
                   </span>
                 </div>
               </section>
@@ -463,9 +463,9 @@ function StudyPrepPage() {
               {/* Course Grid */}
               <section>
                 <div className="mb-5 flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-[#202b35]">
+                  <h3 className="text-xl font-bold text-white">
                     {activeSection === "All Courses"
-                      ? "All Learning Paths"
+                      ? "All Resources"
                       : activeSection}
                   </h3>
 
@@ -527,24 +527,24 @@ function StudyPrepPage() {
                       key={item.id || index}
                       type="button"
                       onClick={() => handleSidebarResourceClick(item)}
-                      className="group w-full rounded-2xl border border-[#e3e8e4] bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-[#b9d9c1] hover:shadow-lg"
+                      className="group w-full rounded-2xl border border-[#303030] bg-[#1c1c1c] p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-emerald-500 hover:shadow-lg"
                     >
-                      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#eaf6ed] text-[#308d46] transition group-hover:bg-[#308d46] group-hover:text-white">
+                      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#292929] text-emerald-400 transition group-hover:bg-[#308d46] group-hover:text-white">
                         <BookOpen size={22} />
                       </div>
 
                       <div className="flex items-center justify-between gap-3">
-                        <h3 className="font-bold text-[#202b35]">
+                        <h3 className="font-bold text-white">
                           {item.title}
                         </h3>
 
                         <ArrowUpRight
                           size={18}
-                          className="shrink-0 text-gray-400 transition group-hover:text-[#308d46]"
+                          className="shrink-0 text-gray-400 transition group-hover:text-emerald-400"
                         />
                       </div>
 
-                      <p className="mt-2 text-xs text-gray-500">
+                      <p className="mt-2 text-xs text-slate-400">
                         {item.description ||
                           `Learning resource ${index + 1}`}
                       </p>

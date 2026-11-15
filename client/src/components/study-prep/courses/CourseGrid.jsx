@@ -10,7 +10,7 @@ function CourseGrid({ courses, onExplore }) {
         </h3>
 
         <p className="mt-1 text-sm text-[#89919a]">
-          Try another course name or category.
+          Try another resource name or category.
         </p>
       </div>
     );

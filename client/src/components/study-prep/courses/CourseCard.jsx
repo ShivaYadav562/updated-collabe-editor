@@ -47,17 +47,17 @@ function CourseCard({ course, onExplore }) {
   
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-[#e1e4e8] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#b9d9c1] hover:shadow-lg">
+    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-[#303030] bg-[#1c1c1c] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500 hover:shadow-lg">
 
       {/* Card Artwork */}
       <div
-        className={`relative h-[125px] shrink-0 overflow-hidden bg-gradient-to-br ${theme.background}`}
+        className={`relative h-[125px] shrink-0 overflow-hidden bg-[#242424]`}
       >
         <div
-          className={`absolute -right-10 -top-16 h-44 w-44 rounded-full ${theme.glow} opacity-40 blur-3xl`}
+          className={`absolute -right-10 -top-16 h-44 w-44 rounded-full bg-white/5 opacity-30 blur-3xl`}
         />
 
-        <div className="absolute right-4 top-4 flex h-[76px] w-[76px] items-center justify-center rounded-2xl border border-white/80 bg-white/65 shadow-md backdrop-blur-xl transition duration-300 group-hover:scale-105">
+        <div className="absolute right-4 top-4 flex h-[76px] w-[76px] items-center justify-center rounded-2xl border border-[#404040] bg-[#303030] shadow-md backdrop-blur-xl transition duration-300 group-hover:scale-105">
           <Icon
             size={38}
             strokeWidth={1.6}
@@ -65,16 +65,16 @@ function CourseCard({ course, onExplore }) {
           />
         </div>
 
-        <span className="absolute left-4 top-4 rounded bg-red-600 px-2 py-1 text-[9px] font-bold tracking-wide text-white shadow-sm">
+        <span className="absolute left-4 top-4 rounded bg-[#303030] px-2 py-1 text-[9px] font-bold tracking-wide text-slate-200 shadow-sm">
           {course.badge}
         </span>
 
         <div className="absolute bottom-4 left-4 z-10 max-w-[65%]">
-          <h3 className="text-xl font-extrabold leading-tight tracking-tight text-[#102b45]">
+          <h3 className="text-xl font-extrabold leading-tight tracking-tight text-white">
             {course.title}
           </h3>
 
-          <p className="mt-1 line-clamp-1 text-[10px] font-semibold text-slate-700">
+          <p className="mt-1 line-clamp-1 text-[10px] font-semibold text-slate-300">
             {course.subtitle}
           </p>
         </div>
@@ -85,18 +85,18 @@ function CourseCard({ course, onExplore }) {
 
         <div className="mb-2 flex items-center justify-between gap-2">
           <span
-            className={`text-[10px] font-bold uppercase tracking-wide ${theme.text}`}
+            className={`text-[10px] font-bold uppercase tracking-wide text-slate-300`}
           >
             {course.category}
           </span>
 
-          <span className="flex shrink-0 items-center gap-1 rounded-full bg-[#fff8e8] px-2 py-1 text-[11px] font-semibold text-[#b7791f]">
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-[#303030] px-2 py-1 text-[11px] font-semibold text-amber-400">
             <Star size={11} fill="currentColor" />
             {course.rating}
           </span>
         </div>
 
-        <p className="mb-3 line-clamp-2 min-h-[40px] text-xs leading-5 text-[#6b7280]">
+        <p className="mb-3 line-clamp-2 min-h-[40px] text-xs leading-5 text-slate-300">
           {course.description}
         </p>
 
@@ -105,7 +105,7 @@ function CourseCard({ course, onExplore }) {
           <span>{course.level}</span>
         </div>
 
-        <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#edf0f2] pt-3">
+        <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#303030] pt-3">
           <span className="text-[10px] font-medium text-[#8a929b]">
             {course.lessons}
           </span>

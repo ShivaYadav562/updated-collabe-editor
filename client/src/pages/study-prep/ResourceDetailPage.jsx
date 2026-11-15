@@ -56,8 +56,8 @@ function ResourceDetailPage() {
 
   if (!course.title || !resource || !resourceType) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#f8faf9]">
-        <h2 className="text-xl font-bold text-[#17212b]">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white">
+        <h2 className="text-xl font-bold text-white">
           Resource not found
         </h2>
 
@@ -116,22 +116,22 @@ function ResourceDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8faf9] px-5 py-8 sm:px-8">
+    <div className="min-h-screen bg-black text-white px-5 py-8 sm:px-8">
       <div className="mx-auto max-w-5xl">
         {/* Back Button */}
         <button
           onClick={backToResources}
-          className="mb-8 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#308d46] hover:text-[#308d46]"
+          className="mb-8 inline-flex items-center gap-2 rounded-lg border border-[#303030] bg-[#242424] px-4 py-2 text-sm font-semibold text-slate-200 hover:border-[#308d46] hover:text-[#308d46]"
         >
           <ArrowLeft size={17} />
           Back to Resources
         </button>
 
         {/* Resource Details */}
-        <div className="rounded-2xl border border-[#e3e8e4] bg-white p-6 shadow-sm sm:p-8">
+        <div className="rounded-2xl border border-[#303030] bg-[#1c1c1c] p-6 shadow-sm sm:p-8">
           {/* Header */}
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#eaf6ed] text-[#308d46]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#303030] text-[#308d46]">
               {isVideo ? (
                 <Play size={23} />
               ) : (
@@ -144,7 +144,7 @@ function ResourceDetailPage() {
                 {course.title}
               </p>
 
-              <h1 className="text-2xl font-bold text-[#17212b]">
+              <h1 className="text-2xl font-bold text-white">
                 {currentResource.title}
               </h1>
             </div>
@@ -175,7 +175,7 @@ function ResourceDetailPage() {
               className="max-h-[450px] w-full rounded-xl object-contain"
             />
           ) : (
-            <div className="flex min-h-56 flex-col items-center justify-center rounded-xl bg-[#f5f8f5] text-gray-500">
+            <div className="flex min-h-56 flex-col items-center justify-center rounded-xl bg-[#242424] text-slate-400">
               <BookOpen size={40} />
 
               <p className="mt-3 text-sm">

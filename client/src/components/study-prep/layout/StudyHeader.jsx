@@ -1,7 +1,7 @@
 
 function StudyHeader({
-  title = "Find Your Learning Path",
-  description = "Choose a course and start learning at your own pace.",
+  title = "Explore Learning Resources",
+  description = "Choose a resource and start learning at your own pace.",
   count,
 }) {
   return (
@@ -19,7 +19,7 @@ function StudyHeader({
 
         {count !== undefined && (
           <span className="text-sm font-medium text-[#7b8490]">
-            {count} Courses Available
+            {count} Resources Available
           </span>
         )}
       </div>

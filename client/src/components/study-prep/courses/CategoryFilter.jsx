@@ -8,7 +8,7 @@ function CategoryFilter({
     <div className="mb-7 flex gap-2.5 overflow-x-auto pb-2">
       {categories.map((category) => (
         <button
-          key={category}
+          key={category === "All Courses" ? "All Resources" : category}
           onClick={() => onCategoryChange(category)}
           className={`
             shrink-0 rounded-full border px-5 py-2.5
@@ -20,7 +20,7 @@ function CategoryFilter({
             }
           `}
         >
-          {category}
+          {category === "All Courses" ? "All Resources" : category}
         </button>
       ))}
     </div>

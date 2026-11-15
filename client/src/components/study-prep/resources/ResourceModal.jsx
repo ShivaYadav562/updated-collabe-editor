@@ -133,21 +133,21 @@ function ResourceModal({ course, onClose, onSelectResource }) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="w-full max-w-lg overflow-hidden rounded-2xl border border-[#303030] bg-[#1c1c1c] shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-gray-100 p-5">
+        <div className="flex items-start justify-between border-b border-[#303030] p-5">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-[#308d46]">
               FREE LEARNING RESOURCES
             </span>
 
-            <h2 className="mt-2 text-2xl font-extrabold text-[#17212b]">
+            <h2 className="mt-2 text-2xl font-extrabold text-white">
               {course.title}
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-slate-400">
               Choose how you want to learn.
             </p>
           </div>
@@ -155,7 +155,7 @@ function ResourceModal({ course, onClose, onSelectResource }) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200"
+            className="rounded-full bg-[#303030] p-2 text-slate-300 hover:bg-[#404040]"
             aria-label="Close modal"
           >
             <X size={18} />
@@ -175,7 +175,7 @@ function ResourceModal({ course, onClose, onSelectResource }) {
                   onClick={() =>
                     onSelectResource(resource.id, course)
                   }
-                  className="group flex items-start gap-3 rounded-xl border border-gray-200 p-4 text-left transition hover:-translate-y-0.5 hover:border-[#308d46] hover:shadow-md"
+                  className="group flex items-start gap-3 rounded-xl border border-[#303030] bg-[#242424] p-4 text-left transition hover:-translate-y-0.5 hover:border-[#308d46] hover:shadow-md"
                 >
                   <div
                     className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${colorStyles[resource.color]}`}
@@ -184,7 +184,7 @@ function ResourceModal({ course, onClose, onSelectResource }) {
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-bold text-[#202b35]">
+                    <h3 className="font-bold text-white">
                       {resource.title}
                     </h3>
 
@@ -206,10 +206,10 @@ function ResourceModal({ course, onClose, onSelectResource }) {
                 size={32}
                 className="mx-auto text-gray-400"
               />
-              <h3 className="mt-3 font-semibold text-gray-700">
+              <h3 className="mt-3 font-semibold text-slate-200">
                 Resources coming soon
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-slate-400">
                 Learning materials will be added soon.
               </p>
             </div>
@@ -217,8 +217,8 @@ function ResourceModal({ course, onClose, onSelectResource }) {
         </div>
 
         {/* Footer */}
-        <div className="border-t border-gray-100 bg-gray-50 px-5 py-3">
-          <p className="text-center text-xs font-medium text-gray-500">
+        <div className="border-t border-[#303030] bg-[#242424] px-5 py-3">
+          <p className="text-center text-xs font-medium text-slate-400">
             All learning resources are free.
           </p>
         </div>
