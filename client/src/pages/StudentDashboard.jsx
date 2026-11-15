@@ -16,7 +16,6 @@ import {
   Zap,
   Search,
   Bell,
-  Settings,
   Layers3,
   Monitor,
   FileText,
@@ -787,7 +786,7 @@ const handleNavigation = (label) => {
                     </h2>
                     <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">
                       Get help understanding concepts, reviewing code, and
-                      preparing for interviews — right from your learning space.
+                      preparing for interviews â€” right from your learning space.
                     </p>
                   </div>
                 </div>
@@ -805,7 +804,7 @@ const handleNavigation = (label) => {
             </section>
 
             <footer className="flex flex-col justify-between gap-2 border-t border-white/[0.06] pt-5 text-[10px] text-zinc-600 sm:flex-row">
-              <p>Collab Editor · Your learning workspace</p>
+              <p>Collab Editor Â· Your learning workspace</p>
               <p>Keep learning. Keep building.</p>
             </footer>
             </div>

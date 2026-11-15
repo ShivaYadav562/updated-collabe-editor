@@ -6,10 +6,10 @@ const API_BASE =
   "https://collab-editor-backend-1-fy11.onrender.com/api/auth";
 
 const features = [
-  { icon: "▣", title: "Live Code Rooms", text: "Real-time collaboration", color: "violet" },
-  { icon: "✦", title: "AI Tutor", text: "Context-aware help", color: "blue" },
-  { icon: "⌘", title: "Run Your Code", text: "Fast feedback loop", color: "green" },
-  { icon: "↗", title: "Peer Review", text: "Build better together", color: "orange" },
+  { icon: "â–£", title: "Live Code Rooms", text: "Real-time collaboration", color: "violet" },
+  { icon: "âœ¦", title: "AI Tutor", text: "Context-aware help", color: "blue" },
+  { icon: "âŒ˜", title: "Run Your Code", text: "Fast feedback loop", color: "green" },
+  { icon: "â†—", title: "Peer Review", text: "Build better together", color: "orange" },
 ];
 
 function GoogleIcon() {
@@ -28,7 +28,7 @@ function CodePreview() {
     <div className="preview-window" aria-label="Decorative collaborative editor preview">
       <div className="preview-toolbar">
         <div className="preview-brand">
-          <span>⌘</span> Collab<span>Editor</span>
+          <span>âŒ˜</span> Collab<span>Editor</span>
         </div>
         <div className="live-users">
           <i>J</i><i>M</i><i>A</i><small>+3</small>
@@ -38,17 +38,17 @@ function CodePreview() {
 
       <div className="preview-content">
         <aside className="preview-files">
-          <span>⌁   collab-room-01</span>
-          <strong>▣   index.js</strong>
-          <span>▧   styles.css</span>
-          <span>⌘   App.jsx</span>
-          <span>▤   README.md</span>
+          <span>âŒ   collab-room-01</span>
+          <strong>â–£   index.js</strong>
+          <span>â–§   styles.css</span>
+          <span>âŒ˜   App.jsx</span>
+          <span>â–¤   README.md</span>
         </aside>
 
         <div className="preview-code">
-          <div className="file-tab">index.js <b>●</b></div>
+          <div className="file-tab">index.js <b>â—</b></div>
           <div className="code-lines">
-            <p><em>1</em><span className="syntax-comment">// Build something great together</span></p>
+            <p><em>1</em><span className="syntax-comment">{"// Build something great together"}</span></p>
             <p><em>2</em><span className="syntax-pink">import</span> express <span className="syntax-pink">from</span> <span className="syntax-green">'express'</span>;</p>
             <p><em>3</em><span className="syntax-pink">const</span> app = express();</p>
             <p><em>4</em></p>
@@ -61,10 +61,10 @@ function CodePreview() {
         </div>
 
         <div className="ai-preview">
-          <div className="ai-preview-heading">✦   AI Pair Assistant</div>
+          <div className="ai-preview-heading">âœ¦   AI Pair Assistant</div>
           <div className="question-bubble">Can you explain this code?</div>
           <div className="answer-bubble">
-            <span>✦</span>
+            <span>âœ¦</span>
             <p>This creates a simple Express server and returns a JSON response from the root route.</p>
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function AuthPage() {
       <header className="orbit-navbar">
         <div className="nav-container">
           <a className="brand-group" href="/" aria-label="CollabEditor home">
-            <span className="brand-logo-badge">⌘</span>
+            <span className="brand-logo-badge">âŒ˜</span>
             <span className="brand-title">
               Collab<span>Editor</span>
             </span>
@@ -221,7 +221,7 @@ export default function AuthPage() {
       <main className="main-content-layout">
         <section className="left-hero-section" id="features">
           <div className="version-tag">
-            <i /> CollabEditor <b>·</b> Real-time Dev Studio
+            <i /> CollabEditor <b>Â·</b> Real-time Dev Studio
           </div>
 
           <h1 className="hero-heading">
@@ -254,7 +254,7 @@ export default function AuthPage() {
             <span className="workspace-live">
               <i /> Workspace Live: <strong>collab-room-01</strong>
             </span>
-            <span className="latency-badge">↔ Real-time sync</span>
+            <span className="latency-badge">â†” Real-time sync</span>
           </div>
 
           <CodePreview />
@@ -263,7 +263,7 @@ export default function AuthPage() {
         <section className="right-auth-section">
           <div className="auth-card">
             <div className="auth-header">
-              <div className="auth-logo-badge">⌘</div>
+              <div className="auth-logo-badge">âŒ˜</div>
               <div className="auth-brand-name">
                 Collab<span>Editor</span>
               </div>
@@ -321,7 +321,7 @@ export default function AuthPage() {
                   )}
                 </div>
                 <div className="input-field-wrapper">
-                  <span className="field-icon">✉</span>
+                  <span className="field-icon">âœ‰</span>
                   <input
                     id="email"
                     type="email"
@@ -354,7 +354,7 @@ export default function AuthPage() {
                 </div>
 
                 <div className="input-field-wrapper">
-                  <span className="field-icon">▣</span>
+                  <span className="field-icon">â–£</span>
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -377,7 +377,7 @@ export default function AuthPage() {
                     title={showPassword ? "Hide password" : "Show password"}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? "Hide" : "◎"}
+                    {showPassword ? "Hide" : "â—Ž"}
                   </button>
                 </div>
               </div>
@@ -418,7 +418,7 @@ export default function AuthPage() {
                     ? "Create Account"
                     : "Sign In"}
                 </span>
-                <span className="btn-arrow">→</span>
+                <span className="btn-arrow">â†’</span>
               </button>
             </form>
 
@@ -431,13 +431,13 @@ export default function AuthPage() {
                 className="signup-link"
                 onClick={switchMode}
               >
-                {isSignup ? "Sign in →" : "Create an account →"}
+                {isSignup ? "Sign in â†’" : "Create an account â†’"}
               </button>
             </div>
 
             <div className="card-trust-footer">
-              <span>▣ Secure Sign In</span>
-              <span>·</span>
+              <span>â–£ Secure Sign In</span>
+              <span>Â·</span>
               <span> Real-time Collaboration</span>
             </div>
           </div>
@@ -447,11 +447,11 @@ export default function AuthPage() {
       <footer className="orbit-footer">
         <div className="footer-container">
           <p>
-            © {new Date().getFullYear()} CollabEditor · Built for collaborative
+            Â© {new Date().getFullYear()} CollabEditor Â· Built for collaborative
             coding
           </p>
           <div className="compliance-badges">
-            <span>▣ Secure Sessions</span>
+            <span>â–£ Secure Sessions</span>
             <span> Real-time Sync</span>
           </div>
         </div>
