@@ -63,7 +63,7 @@ function EditorPage() {
   // Connect Socket.IO
   useEffect(() => {
     const newSocket = io(
-      "https://collab-editor-backend-1-fy11.onrender.com"
+      "https://collabe-editor-backend.onrender.com"
     );
 
     setSocket(newSocket);
@@ -199,7 +199,7 @@ function EditorPage() {
       const user = JSON.parse(localStorage.getItem("user"));
 
       const response = await fetch(
-        "https://collab-editor-backend-1-fy11.onrender.com/api/rooms/create",
+        "https://collabe-editor-backend.onrender.com/api/rooms/create",
         {
           method: "POST",
           headers: {

@@ -3,7 +3,7 @@ import "./AuthPage.css";
 import DotGlobe from "./DotGlobeBackground";
 
 const API_BASE =
-  "https://collab-editor-backend-1-fy11.onrender.com/api/auth";
+  "https://collabe-editor-backend.onrender.com/api/auth";
 
 const features = [
   { icon: "â–£", title: "Live Code Rooms", text: "Real-time collaboration", color: "violet" },
