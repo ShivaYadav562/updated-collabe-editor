@@ -220,6 +220,20 @@ export const resourceContent = {
     ],
   },
 
+  "Web Development": {
+    title: "Web Development",
+    description:
+      "Master modern frontend, backend and full-stack web technologies.",
+    resources: [
+      "HTML5 & Modern Responsive Layouts",
+      "JavaScript ES6+ & TypeScript",
+      "React.js Core & Advanced State",
+      "Node.js, Express & RESTful APIs",
+      "Database Integration & MongoDB",
+      "Full Stack Deployment & CI/CD",
+    ],
+  },
+
   "AI Tutor": {
     title: "AI Tutor",
     description: "Your AI-powered learning assistant.",

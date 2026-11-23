@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState, useEffect } from "react";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { recordCourseTopicAccess } from "../../services/dashboardApi";
 
 import {
   BookOpen,
@@ -100,16 +101,34 @@ const sectionResourceTypeMap = {
   "Python Playlists": "python",
   "C++ Playlists": "cpp",
   "JavaScript Playlists": "javascript",
+  "System Design": "systemDesign",
+  "Web Development": "webDevelopment",
+  "Interview Preparation": "interviewPreparation",
 };
 
 function StudyPrepPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  const initialSection =
+    searchParams.get("section") ||
+    location.state?.section ||
+    "All Courses";
 
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All Courses");
-  const [activeSection, setActiveSection] = useState("All Courses");
+  const [activeSection, setActiveSection] = useState(initialSection);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
+
+  useEffect(() => {
+    const requested = searchParams.get("section") || location.state?.section;
+    if (requested) {
+      setActiveSection(requested);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [searchParams, location.state]);
 
   // Filter Courses
   const filteredCourses = useMemo(() => {
@@ -196,6 +215,9 @@ function StudyPrepPage() {
       "Python Playlists": "Python Programming",
       "C++ Playlists": "C++ Programming",
       "JavaScript Playlists": "JavaScript",
+      "System Design": "System Design",
+      "Web Development": "MERN Stack",
+      "Interview Preparation": "Interview Preparation",
     };
 
     const courseTitle = sidebarCourseMap[activeSection];
@@ -208,7 +230,25 @@ function StudyPrepPage() {
 
     if (!course) return;
 
-    const resourceId = item.id || "resource-0";
+    const resourceId = item.id || (typeof item === "string" ? item : "resource-0");
+    const itemTitle = typeof item === "string" ? item : (item.title || "Topic");
+
+    // Track last accessed topic in backend for resuming course
+    const slugMap = {
+      "DSA Preparation": "dsa",
+      "System Design": "system-design",
+      "MERN Stack": "web-development",
+      "Interview Preparation": "interview-prep",
+    };
+    const slug = slugMap[courseTitle];
+    if (slug) {
+      recordCourseTopicAccess(slug, {
+        itemId: resourceId,
+        itemTitle,
+        resourceType,
+        courseTitle,
+      }).catch(() => {});
+    }
 
     navigate(
       `/study-prep/resource/${encodeURIComponent(
@@ -259,6 +299,15 @@ function StudyPrepPage() {
             <Sparkles size={14} />
             Learn something new today
           </div>
+
+          {/* Back to Dashboard */}
+          <button
+            type="button"
+            onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm transition-all hover:border-[#308d46] hover:text-[#308d46]"
+          >
+            ← Dashboard
+          </button>
         </div>
       </header>
 

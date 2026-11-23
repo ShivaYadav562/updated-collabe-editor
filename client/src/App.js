@@ -1,7 +1,9 @@
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
+import { StudyTimerProvider } from "./context/StudyTimerContext";
 
+import FloatingTimerWidget from "./components/dashboard/FloatingTimerWidget";
 import LandingPage from "./pages/LandingPage";
 import EditorPage from "./pages/EditorPage";
 import AuthPage from "./pages/AuthPage";
@@ -15,7 +17,8 @@ function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <Routes>
+        <StudyTimerProvider>
+          <Routes>
           {/* Landing Page */}
           <Route path="/" element={<LandingPage />} />
 
@@ -64,7 +67,9 @@ function App() {
             element={<EditorPage />}
           />
         </Routes>
-      </BrowserRouter>
+          <FloatingTimerWidget />
+      </StudyTimerProvider>
+    </BrowserRouter>
     </ThemeProvider>
   );
 }
