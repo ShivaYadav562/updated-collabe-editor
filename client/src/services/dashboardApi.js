@@ -1,5 +1,6 @@
+//const API_BASE = `${import.meta.env.VITE_API_URL}/api/auth`;
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || "http://localhost:5000";
+  process.env.REACT_APP_API_URL || "http://localhost:5000"; 
 
 function getAuthHeaders() {
   // Check localStorage first (Remember Me), then sessionStorage (session-only login)

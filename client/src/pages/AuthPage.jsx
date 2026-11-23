@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import "./AuthPage.css";
 import DotGlobe from "./DotGlobeBackground";
 
-const API_BASE =
-  process.env.REACT_APP_API_URL
-    ? `${process.env.REACT_APP_API_URL}/api/auth`
-    : "http://localhost:5000/api/auth";
+
+const API_BASE = `${
+  import.meta.env.VITE_API_URL || "http://localhost:5000"
+}/api/auth`;
+
 
 const features = [
   { icon: "â–£", title: "Live Code Rooms", text: "Real-time collaboration", color: "violet" },
