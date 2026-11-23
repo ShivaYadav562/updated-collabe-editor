@@ -3,7 +3,9 @@ import "./AuthPage.css";
 import DotGlobe from "./DotGlobeBackground";
 
 const API_BASE =
-  "https://collabe-editor-backend.onrender.com/api/auth";
+  process.env.REACT_APP_API_URL
+    ? `${process.env.REACT_APP_API_URL}/api/auth`
+    : "http://localhost:5000/api/auth";
 
 const features = [
   { icon: "â–£", title: "Live Code Rooms", text: "Real-time collaboration", color: "violet" },

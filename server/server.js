@@ -8,6 +8,7 @@ const connectDB = require("./config/db");
 const Room = require("./models/Room");
 const authRoutes = require("./routes/authRoutes");
 const roomRoutes = require("./routes/roomRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 connectDB();
 
@@ -50,6 +51,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/test", (req, res) => {
   res.send("Server Working");

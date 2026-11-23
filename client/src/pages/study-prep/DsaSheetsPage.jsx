@@ -1,13 +1,38 @@
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { dsaCategories, dsaPatterns } from "../../data/study-prep/dsaProblems";
+import {
+  completeCourseTopic,
+  fetchCourseProgressBySlug,
+  batchSyncDsaProgress,
+} from "../../services/dashboardApi";
 
-const STORAGE_KEY = "study-prep-dsa-solved";
+const LEGACY_STORAGE_KEY = "study-prep-dsa-solved";
+
+/** Returns a user-scoped localStorage key to prevent cross-user bleed. */
+function getDsaStorageKey() {
+  try {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const uid =
+      user?._id || user?.id || user?.userId || user?.email || user?.username;
+    if (uid) return `study-prep-dsa-solved-${uid}`;
+  } catch {}
+  return LEGACY_STORAGE_KEY;
+}
 
 export default function DsaSheetsPage() {
+  const [searchParams] = useSearchParams();
+  const patternParam = Number(searchParams.get("pattern"));
+
   const [solved, setSolved] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      const storageKey = getDsaStorageKey();
+      const userScoped = JSON.parse(localStorage.getItem(storageKey));
+      if (userScoped && Object.keys(userScoped).length > 0) return userScoped;
+      // Migrate from legacy key if user-scoped key is empty
+      const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY));
+      return legacy || {};
     } catch {
       return {};
     }
@@ -15,12 +40,14 @@ export default function DsaSheetsPage() {
 
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [expandedPattern, setExpandedPattern] = useState(1);
+  const [expandedPattern, setExpandedPattern] = useState(patternParam || 1);
   const [showSolvedOnly, setShowSolvedOnly] = useState(false);
 
-  // Save solved progress in browser
+  // Save solved progress in browser (user-scoped key)
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(solved));
+    try {
+      localStorage.setItem(getDsaStorageKey(), JSON.stringify(solved));
+    } catch {}
   }, [solved]);
 
   // Unique key for every problem inside a pattern
@@ -31,6 +58,79 @@ export default function DsaSheetsPage() {
     (total, pattern) => total + pattern.problems.length,
     0
   );
+
+  // Sync with MongoDB progress
+  useEffect(() => {
+    let isMounted = true;
+    async function syncWithBackend() {
+      try {
+        const res = await fetchCourseProgressBySlug("dsa");
+        if (res.success && res.data && Array.isArray(res.data.completedItems)) {
+          const dbMap = {};
+          res.data.completedItems.forEach((item) => {
+            dbMap[item.itemId] = true;
+          });
+
+          if (!isMounted) return;
+
+          // Compute merged state and local-only items OUTSIDE the updater
+          setSolved((prev) => {
+            const merged = { ...prev, ...dbMap };
+            try {
+              localStorage.setItem(getDsaStorageKey(), JSON.stringify(merged));
+            } catch {}
+            return merged;
+          });
+
+          // Determine which items exist locally but not in MongoDB and push them
+          // We read from localStorage because state may not be settled yet
+          let currentLocal = {};
+          try {
+            currentLocal =
+              JSON.parse(localStorage.getItem(getDsaStorageKey())) || {};
+          } catch {}
+          const localOnly = [];
+          Object.entries(currentLocal).forEach(([key, isDone]) => {
+            if (isDone && !dbMap[key]) {
+              const parts = key.split("-");
+              const patNum = Number(parts[0]) || 1;
+              const probTitle =
+                parts.slice(2).join("-") || parts[1] || "Problem";
+              localOnly.push({
+                itemId: key,
+                itemTitle: probTitle,
+                patternNumber: patNum,
+              });
+            }
+          });
+
+          if (localOnly.length > 0) {
+            batchSyncDsaProgress(localOnly, totalProblems).catch((err) =>
+              console.warn("Auto-sync local to MongoDB failed:", err)
+            );
+          }
+        }
+      } catch (err) {
+        console.warn("Unable to fetch remote DSA progress:", err);
+      }
+    }
+
+    syncWithBackend();
+    return () => {
+      isMounted = false;
+    };
+  }, [totalProblems]);
+
+  // Listen for pattern parameter changes in URL
+  useEffect(() => {
+    const p = Number(searchParams.get("pattern"));
+    if (p && !isNaN(p)) {
+      setExpandedPattern(p);
+      setTimeout(() => {
+        document.getElementById(`pattern-${p}`)?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [searchParams]);
 
   const solvedCount = Object.values(solved).filter(Boolean).length;
   const progress = totalProblems
@@ -87,13 +187,33 @@ export default function DsaSheetsPage() {
       });
   }, [search, activeCategory, showSolvedOnly, solved]);
 
-  const toggleSolved = (pattern, problem) => {
+  const toggleSolved = async (pattern, problem) => {
     const key = getProblemKey(pattern, problem);
+    const newStatus = !solved[key];
 
-    setSolved((previous) => ({
-      ...previous,
-      [key]: !previous[key],
-    }));
+    setSolved((previous) => {
+      const updated = {
+        ...previous,
+        [key]: newStatus,
+      };
+      try {
+        localStorage.setItem(getDsaStorageKey(), JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
+    try {
+      await completeCourseTopic("dsa", {
+        itemId: key,
+        itemTitle: problem.title,
+        patternNumber: pattern.number,
+        totalItems: totalProblems,
+        completed: newStatus,
+        courseTitle: "Data Structures & Algorithms",
+      });
+    } catch (err) {
+      console.error("Failed to sync DSA problem to MongoDB:", err);
+    }
   };
 
   const getPatternProgress = (pattern) => {
@@ -407,6 +527,7 @@ export default function DsaSheetsPage() {
                   return (
                     <div
                       key={pattern.number}
+                      id={`pattern-${pattern.number}`}
                       className="overflow-hidden rounded-2xl border border-[#303030] bg-[#1c1c1c] shadow-sm transition hover:border-emerald-200"
                     >
                       {/* PATTERN HEADER */}

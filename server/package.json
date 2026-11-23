@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node tests/dashboard.test.js && node tests/dailyGoalsPhase2.test.js && node tests/courseProgressPhase3.test.js && node tests/studyTimePhase4.test.js && node tests/streakPhase5.test.js && node tests/timezonePhase6.test.js && node tests/e2ePhase7.test.js",
     "start": "node server.js"
   },
   "keywords": [],

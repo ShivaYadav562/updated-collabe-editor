@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -25,40 +25,69 @@ import {
   LogOut,
   Menu,
   X,
+  Trash2,
+  Loader2,
 } from "lucide-react";
+import {
+  fetchDailyGoals,
+  createDailyGoal,
+  toggleDailyGoal,
+  deleteDailyGoal,
+  fetchCourseProgress,
+  fetchDashboardOverview,
+  logStudySession,
+} from "../services/dashboardApi";
+import StudyTimer from "../components/dashboard/StudyTimer";
 
-const learningItems = [
+const COURSE_CONFIGS = [
   {
+    courseSlug: "dsa",
     title: "Data Structures & Algorithms",
     subtitle: "Master problem solving",
     icon: Code2,
-    progress: 68,
-    completed: "34 / 50 problems",
     tag: "DSA",
+    unit: "problems",
+    defaultTotal: 150,
+    studySectionRoute: "/study-prep?section=DSA%20Sheets",
+    getContinueRoute: (saved) => {
+      if (saved?.lastAccessedTopic?.patternNumber) {
+        return `/study-prep?section=DSA%20Sheets&pattern=${saved.lastAccessedTopic.patternNumber}`;
+      }
+      return "/study-prep?section=DSA%20Sheets";
+    },
   },
   {
+    courseSlug: "system-design",
     title: "System Design",
     subtitle: "Build scalable systems",
     icon: Layers3,
-    progress: 32,
-    completed: "8 / 25 topics",
     tag: "DESIGN",
+    unit: "topics",
+    defaultTotal: 25,
+    studySectionRoute: "/study-prep?section=System%20Design",
+    getContinueRoute: () => "/study-prep?section=System%20Design",
   },
   {
+    courseSlug: "web-development",
     title: "Web Development",
     subtitle: "Build real-world projects",
     icon: Monitor,
-    progress: 74,
-    completed: "18 / 24 topics",
     tag: "DEVELOPMENT",
+    unit: "topics",
+    defaultTotal: 24,
+    studySectionRoute: "/study-prep?section=Web%20Development",
+    getContinueRoute: () => "/study-prep?section=Web%20Development",
   },
   {
+    courseSlug: "interview-prep",
     title: "Interview Preparation",
     subtitle: "Get placement ready",
     icon: GraduationCap,
-    progress: 45,
-    completed: "9 / 20 topics",
     tag: "CAREER",
+    unit: "topics",
+    defaultTotal: 20,
+    studySectionRoute: "/study-prep?section=Interview%20Preparation",
+    getContinueRoute: () => "/study-prep?section=Interview%20Preparation",
   },
 ];
 
@@ -67,31 +96,37 @@ const studyItems = [
     title: "DSA Practice",
     description: "Patterns, problems and contests",
     icon: Code2,
+    route: "/study-prep?section=DSA%20Sheets",
   },
   {
     title: "Core CS Subjects",
     description: "DBMS, OS, CN and OOP",
     icon: BrainCircuit,
+    route: "/study-prep?section=Core%20CS%20Subjects",
   },
   {
     title: "Study Materials",
     description: "Notes, PDFs and revision sheets",
     icon: FileText,
+    route: "/study-prep?section=DSA%20Notes",
   },
   {
     title: "Interview Prep",
     description: "Technical and HR questions",
     icon: GraduationCap,
+    route: "/study-prep?section=Interview%20Preparation",
   },
   {
     title: "Web Development",
     description: "Frontend and backend learning",
     icon: Monitor,
+    route: "/study-prep?section=Web%20Development",
   },
   {
     title: "System Design",
     description: "Architecture and scalability",
     icon: Layers3,
+    route: "/study-prep?section=System%20Design",
   },
 ];
 
@@ -155,6 +190,163 @@ export default function StudentDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [activeNav, setActiveNav] = useState("Dashboard");
+
+  // Daily goals state
+  const [goals, setGoals] = useState([]);
+  const [goalsLoading, setGoalsLoading] = useState(true);
+  const [goalsError, setGoalsError] = useState(null);
+  const [showAddGoal, setShowAddGoal] = useState(false);
+  const [newGoalTitle, setNewGoalTitle] = useState("");
+  const [newGoalDuration, setNewGoalDuration] = useState("");
+  const [isSubmittingGoal, setIsSubmittingGoal] = useState(false);
+  const [addGoalError, setAddGoalError] = useState(null);
+
+  const loadGoals = useCallback(async () => {
+    try {
+      setGoalsLoading(true);
+      setGoalsError(null);
+      const res = await fetchDailyGoals();
+      if (res.success && res.data) {
+        setGoals(res.data.goals || []);
+      }
+    } catch (err) {
+      console.error("Error loading daily goals:", err);
+      setGoalsError(err.message || "Failed to load goals");
+    } finally {
+      setGoalsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadGoals();
+  }, [loadGoals]);
+
+  const handleToggleGoal = async (goalId) => {
+    setGoals((prev) =>
+      prev.map((g) =>
+        g._id === goalId ? { ...g, completed: !g.completed } : g
+      )
+    );
+
+    try {
+      const res = await toggleDailyGoal(goalId);
+      if (res.success && res.data) {
+        setGoals((prev) =>
+          prev.map((g) => (g._id === goalId ? res.data : g))
+        );
+        loadOverview();
+      }
+    } catch (err) {
+      console.error("Failed to toggle goal:", err);
+      setGoals((prev) =>
+        prev.map((g) =>
+          g._id === goalId ? { ...g, completed: !g.completed } : g
+        )
+      );
+    }
+  };
+
+  const handleCreateGoal = async (e) => {
+    e.preventDefault();
+    const trimmed = newGoalTitle.trim();
+    if (!trimmed) return;
+
+    const durationNum = parseInt(newGoalDuration, 10) || 0;
+
+    try {
+      setIsSubmittingGoal(true);
+      setAddGoalError(null);
+      const res = await createDailyGoal({
+        title: trimmed,
+        targetDurationMinutes: durationNum,
+      });
+      if (res.success && res.data) {
+        setGoals((prev) => [...prev, res.data]);
+        setNewGoalTitle("");
+        setNewGoalDuration("");
+        setShowAddGoal(false);
+        loadOverview();
+      }
+    } catch (err) {
+      console.error("Failed to create goal:", err);
+      setAddGoalError(err.message || "Failed to create goal");
+    } finally {
+      setIsSubmittingGoal(false);
+    }
+  };
+
+  const handleDeleteGoal = async (goalId) => {
+    const previous = [...goals];
+    setGoals((prev) => prev.filter((g) => g._id !== goalId));
+
+    try {
+      await deleteDailyGoal(goalId);
+      loadOverview();
+    } catch (err) {
+      console.error("Failed to delete goal:", err);
+      setGoals(previous);
+    }
+  };
+
+  const totalGoals = goals.length;
+  const completedGoals = goals.filter((g) => g.completed).length;
+  const goalsProgressPercent =
+    totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0;
+
+  // Course progress and overview stats from MongoDB
+  const [courseProgress, setCourseProgress] = useState([]);
+  const [overviewStats, setOverviewStats] = useState(null);
+
+  const loadCourseProgress = useCallback(async () => {
+    try {
+      const res = await fetchCourseProgress();
+      if (res.success && Array.isArray(res.data)) {
+        setCourseProgress(res.data);
+      }
+    } catch (err) {
+      console.warn("Could not fetch course progress:", err);
+    }
+  }, []);
+
+  const loadOverview = useCallback(async () => {
+    try {
+      const res = await fetchDashboardOverview();
+      if (res.success && res.data) {
+        setOverviewStats(res.data.overview);
+      }
+    } catch (err) {
+      console.warn("Could not fetch overview metrics:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCourseProgress();
+    loadOverview();
+  }, [loadCourseProgress, loadOverview]);
+
+  const handleSessionComplete = useCallback(async (durationMinutes, sessionType) => {
+    try {
+      const res = await logStudySession({
+        durationMinutes,
+        sessionType,
+      });
+      if (res.success) {
+        await loadOverview();
+      }
+      return res;
+    } catch (err) {
+      console.error("Failed to record study session:", err);
+      throw err;
+    }
+  }, [loadOverview]);
+
+  const progressMap = useMemo(() => {
+    const map = {};
+    courseProgress.forEach((cp) => {
+      map[cp.courseSlug] = cp;
+    });
+    return map;
+  }, [courseProgress]);
 
   const username = getUserName();
   const firstName = username.split(" ")[0];
@@ -285,6 +477,19 @@ const handleNavigation = (label) => {
           <Target size={17} />
           Today's Goals
         </button>
+
+        <button
+          onClick={() => {
+            setMobileMenuOpen(false);
+            document.getElementById("study-timer-section")?.scrollIntoView({
+              behavior: "smooth",
+            });
+          }}
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] text-zinc-500 transition hover:bg-white/[0.035] hover:text-zinc-200"
+        >
+          <Clock3 size={17} />
+          Study Timer
+        </button>
       </div>
 
       <div className="mt-auto p-4">
@@ -313,6 +518,8 @@ const handleNavigation = (label) => {
             onClick={() => {
               localStorage.removeItem("token");
               localStorage.removeItem("user");
+              localStorage.removeItem("study-session-active");
+              sessionStorage.removeItem("token");
               navigate("/login");
             }}
             className="text-zinc-600 transition hover:text-white"
@@ -439,17 +646,51 @@ const handleNavigation = (label) => {
                   </div>
                 </div>
 
-                <div className="hidden min-w-[190px] rounded-2xl border border-[#303030] bg-black/20 p-5 md:block">
-                  <div className="flex items-center gap-2 text-zinc-400">
-                    <Flame size={17} />
-                    <span className="text-xs">Learning streak</span>
+                <div className="hidden min-w-[200px] rounded-2xl border border-[#303030] bg-black/20 p-5 md:block">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 text-zinc-400">
+                      <Flame
+                        size={17}
+                        className={
+                          overviewStats?.isActiveToday || overviewStats?.activeToday
+                            ? "text-amber-400"
+                            : "text-zinc-500"
+                        }
+                      />
+                      <span className="text-xs">Learning streak</span>
+                    </div>
+                    {(overviewStats?.isActiveToday || overviewStats?.activeToday) && (
+                      <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[9px] font-medium text-amber-400">
+                        Active today
+                      </span>
+                    )}
                   </div>
                   <p className="mt-4 text-4xl font-semibold tracking-tight text-white">
-                    7 <span className="text-sm font-normal text-zinc-500">days</span>
+                    {overviewStats?.currentStreak ?? 0}{" "}
+                    <span className="text-sm font-normal text-zinc-500">days</span>
                   </p>
-                  <p className="mt-2 text-[11px] text-zinc-600">
-                    Keep showing up every day.
+                  <p className="mt-2 text-[11px] text-zinc-500">
+                    {overviewStats?.longestStreak > 0
+                      ? `Personal best: ${overviewStats.longestStreak} days`
+                      : "Keep showing up every day."}
                   </p>
+                  {Array.isArray(overviewStats?.weeklyActivity) && (
+                    <div className="mt-3 flex items-center justify-between gap-1 border-t border-white/[0.06] pt-2.5">
+                      {overviewStats.weeklyActivity.map((day) => (
+                        <div key={day.date} className="flex flex-col items-center gap-1">
+                          <span className="text-[9px] text-zinc-500">{day.day[0]}</span>
+                          <span
+                            title={`${day.date}: ${day.active ? "Active" : "No activity"}`}
+                            className={`h-2 w-2 rounded-full transition-all ${
+                              day.active
+                                ? "bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.5)]"
+                                : "bg-white/10"
+                            }`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </section>
@@ -462,28 +703,42 @@ const handleNavigation = (label) => {
                 <StatCard
                   icon={Code2}
                   label="Problems practiced"
-                  value="34"
+                  value={String(
+                    Math.max(
+                      progressMap["dsa"]?.completedItems?.length ?? 0,
+                      overviewStats?.problemsPracticed ?? 0
+                    )
+                  )}
                   detail="Across your DSA practice"
                 />
                 <StatCard
                   icon={Clock3}
                   label="Study time"
-                  value="12.5 hrs"
-                  detail="Illustrative dashboard data"
+                  value={overviewStats?.studyTimeFormatted || "0.0 hrs"}
+                  detail="Across your study sessions"
                 />
                 <StatCard
                   icon={Target}
                   label="Goals completed"
-                  value="8 / 12"
-                  detail="Your weekly targets"
+                  value={`${completedGoals} / ${totalGoals}`}
+                  detail="Today's goal targets"
                 />
                 <StatCard
                   icon={Flame}
                   label="Current streak"
-                  value="7 days"
-                  detail="One step every day"
+                  value={`${overviewStats?.currentStreak ?? 0} days`}
+                  detail={
+                    overviewStats?.longestStreak > 0
+                      ? `Longest: ${overviewStats.longestStreak} days streak`
+                      : "One step every day"
+                  }
                 />
               </div>
+            </section>
+
+            {/* Study Session Timer */}
+            <section id="study-timer-section">
+              <StudyTimer onSessionComplete={handleSessionComplete} />
             </section>
 
             {/* Join Room */}
@@ -525,27 +780,34 @@ const handleNavigation = (label) => {
               <SectionHeading
                 eyebrow="PICK UP WHERE YOU LEFT OFF"
                 title="Continue learning"
-                action="View all"
-                onAction={() =>
-                  document.getElementById("study-section")?.scrollIntoView({
-                    behavior: "smooth",
-                  })
-                }
+                action="Explore Hub"
+                onAction={() => navigate("/study-prep")}
               />
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
-                {learningItems.map((item) => {
+                {COURSE_CONFIGS.map((item) => {
                   const Icon = item.icon;
+                  const saved = progressMap[item.courseSlug];
+                  const completedCount = saved?.completedItems?.length || 0;
+                  const totalCount =
+                    saved?.totalItems > 0 ? saved.totalItems : item.defaultTotal;
+                  const progress =
+                    totalCount > 0
+                      ? Math.round((completedCount / totalCount) * 100)
+                      : 0;
+
+                  const hasTopic = Boolean(saved?.lastAccessedTopic?.itemTitle);
+                  const topicText = hasTopic
+                    ? saved.lastAccessedTopic.itemTitle.length > 18
+                      ? `Resume: ${saved.lastAccessedTopic.itemTitle.slice(0, 18)}...`
+                      : `Resume: ${saved.lastAccessedTopic.itemTitle}`
+                    : "Continue course";
 
                   return (
-                    <button
+                    <div
                       key={item.title}
-                      onClick={() =>
-                        document.getElementById("study-section")?.scrollIntoView({
-                          behavior: "smooth",
-                        })
-                      }
-                      className="group rounded-2xl border border-[#303030] bg-[#1a1a1a] p-5 text-left transition hover:border-[#414141] hover:bg-[#222222]"
+                      onClick={() => navigate(item.studySectionRoute)}
+                      className="group cursor-pointer rounded-2xl border border-[#303030] bg-[#1a1a1a] p-5 text-left transition hover:border-[#414141] hover:bg-[#222222]"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#303030] bg-white/[0.035] text-zinc-300">
@@ -564,25 +826,33 @@ const handleNavigation = (label) => {
                       </p>
 
                       <div className="mt-5 flex items-center justify-between text-[10px] text-zinc-500">
-                        <span>{item.completed}</span>
-                        <span>{item.progress}%</span>
+                        <span>
+                          {completedCount} / {totalCount} {item.unit}
+                        </span>
+                        <span>{progress}%</span>
                       </div>
 
                       <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.07]">
                         <div
                           className="h-full rounded-full bg-zinc-300 transition-all group-hover:bg-white"
-                          style={{ width: `${item.progress}%` }}
+                          style={{ width: `${progress}%` }}
                         />
                       </div>
 
-                      <div className="mt-4 flex items-center justify-between text-xs text-zinc-500">
-                        <span>Continue course</span>
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(item.getContinueRoute(saved));
+                        }}
+                        className="mt-4 flex items-center justify-between text-xs text-zinc-500 transition hover:text-white"
+                      >
+                        <span className="truncate pr-2">{topicText}</span>
                         <ArrowUpRight
                           size={15}
-                          className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
+                          className="shrink-0 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
                         />
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
@@ -604,15 +874,7 @@ const handleNavigation = (label) => {
                   return (
                     <button
                       key={item.title}
-                      onClick={() => {
-                        if (item.title === "DSA Practice") {
-                          navigate("/editor");
-                        } else {
-                          alert(
-                            `${item.title} section ka content hum next step mein implement karenge.`
-                          );
-                        }
-                      }}
+                      onClick={() => navigate(item.route)}
                       className="group flex items-center gap-4 rounded-2xl border border-[#303030] bg-[#1a1a1a] p-4 text-left transition hover:border-[#414141] hover:bg-[#222222] sm:p-5"
                     >
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#303030] bg-white/[0.035] text-zinc-300 transition group-hover:bg-white/[0.07]">
@@ -644,46 +906,165 @@ const handleNavigation = (label) => {
               className="grid grid-cols-1 gap-5 xl:grid-cols-2"
             >
               <div className="rounded-2xl border border-[#303030] bg-[#1a1a1a] p-5 sm:p-6">
-                <SectionHeading eyebrow="STAY CONSISTENT" title="Today's goals" />
+                <SectionHeading
+                  eyebrow="STAY CONSISTENT"
+                  title="Today's goals"
+                  action={showAddGoal ? "Cancel" : "+ Add goal"}
+                  onAction={() => {
+                    setShowAddGoal((prev) => !prev);
+                    setAddGoalError(null);
+                  }}
+                />
 
-                <div className="space-y-4">
-                  {[
-                    ["Solve 2 DSA problems", "45 min", true],
-                    ["Revise one core CS topic", "30 min", false],
-                    ["Practice interview questions", "20 min", false],
-                  ].map(([title, time, completed]) => (
-                    <div
-                      key={title}
-                      className="flex items-center gap-3 border-b border-white/[0.05] pb-4 last:border-0 last:pb-0"
-                    >
-                      <div
-                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
-                          completed
-                            ? "border-white bg-white text-black"
-                            : "border-white/15 bg-transparent"
-                        }`}
-                      >
-                        {completed && <Zap size={12} />}
-                      </div>
-                      <span
-                        className={`flex-1 text-sm ${
-                          completed ? "text-zinc-500 line-through" : "text-zinc-300"
-                        }`}
-                      >
-                        {title}
-                      </span>
-                      <span className="text-[11px] text-zinc-600">{time}</span>
+                {/* Add Goal Form */}
+                {showAddGoal && (
+                  <form
+                    onSubmit={handleCreateGoal}
+                    className="mb-4 rounded-xl border border-[#303030] bg-[#090a0c] p-3 space-y-3"
+                  >
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        placeholder="Enter goal title (e.g. Solve 2 DSA problems)"
+                        value={newGoalTitle}
+                        onChange={(e) => {
+                          setNewGoalTitle(e.target.value);
+                          setAddGoalError(null);
+                        }}
+                        className="min-w-0 flex-1 rounded-lg border border-[#303030] bg-[#141414] px-3 py-2 text-xs text-white placeholder:text-zinc-600 outline-none focus:border-white/25"
+                        autoFocus
+                      />
+                      <input
+                        type="number"
+                        placeholder="Mins (e.g. 30)"
+                        value={newGoalDuration}
+                        onChange={(e) => setNewGoalDuration(e.target.value)}
+                        className="w-full sm:w-28 rounded-lg border border-[#303030] bg-[#141414] px-3 py-2 text-xs text-white placeholder:text-zinc-600 outline-none focus:border-white/25"
+                        min="0"
+                        max="1440"
+                      />
                     </div>
-                  ))}
-                </div>
 
+                    {addGoalError && (
+                      <p className="text-[11px] text-red-400">{addGoalError}</p>
+                    )}
+
+                    <div className="flex items-center justify-end gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowAddGoal(false);
+                          setAddGoalError(null);
+                        }}
+                        className="px-3 py-1.5 text-xs text-zinc-400 transition hover:text-white"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmittingGoal || !newGoalTitle.trim()}
+                        className="flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-1.5 text-xs font-semibold text-black transition hover:bg-zinc-200 disabled:opacity-50"
+                      >
+                        {isSubmittingGoal && (
+                          <Loader2 size={12} className="animate-spin" />
+                        )}
+                        <span>{isSubmittingGoal ? "Adding..." : "Add Goal"}</span>
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Goals List */}
+                {goalsLoading ? (
+                  <div className="flex items-center justify-center py-8 text-zinc-500 gap-2 text-xs">
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Loading today's goals...</span>
+                  </div>
+                ) : goalsError ? (
+                  <div className="py-6 text-center text-xs">
+                    <p className="text-red-400">{goalsError}</p>
+                    <button
+                      type="button"
+                      onClick={loadGoals}
+                      className="mt-2 text-[11px] text-zinc-400 hover:text-white underline"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : goals.length === 0 ? (
+                  <div className="py-8 text-center text-xs text-zinc-500">
+                    <p>No goals set for today.</p>
+                    <p className="mt-1 text-[11px] text-zinc-600">
+                      Click "+ Add goal" to set your first target.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {goals.map((goal) => (
+                      <div
+                        key={goal._id}
+                        className="group flex items-center gap-3 border-b border-white/[0.05] pb-4 last:border-0 last:pb-0"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleToggleGoal(goal._id)}
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${
+                            goal.completed
+                              ? "border-white bg-white text-black"
+                              : "border-white/15 bg-transparent hover:border-white/40"
+                          }`}
+                          aria-label={
+                            goal.completed
+                              ? "Mark goal incomplete"
+                              : "Mark goal complete"
+                          }
+                        >
+                          {goal.completed && <Zap size={12} />}
+                        </button>
+                        <span
+                          onClick={() => handleToggleGoal(goal._id)}
+                          className={`flex-1 cursor-pointer text-sm transition ${
+                            goal.completed
+                              ? "text-zinc-500 line-through"
+                              : "text-zinc-300 hover:text-white"
+                          }`}
+                        >
+                          {goal.title}
+                        </span>
+                        {goal.targetDurationMinutes > 0 && (
+                          <span className="text-[11px] text-zinc-600">
+                            {goal.targetDurationMinutes} min
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteGoal(goal._id)}
+                          title="Delete goal"
+                          aria-label={`Delete goal: ${goal.title}`}
+                          className="opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-400 transition p-1"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Progress bar */}
                 <div className="mt-6 border-t border-white/[0.06] pt-4">
                   <div className="mb-2 flex items-center justify-between text-xs">
                     <span className="text-zinc-500">Daily progress</span>
-                    <span className="text-zinc-300">1 of 3 completed</span>
+                    <span className="text-zinc-300">
+                      {totalGoals === 0
+                        ? "0 of 0 completed"
+                        : `${completedGoals} of ${totalGoals} completed`}
+                    </span>
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
-                    <div className="h-full w-1/3 rounded-full bg-zinc-300" />
+                    <div
+                      className="h-full rounded-full bg-zinc-300 transition-all duration-300"
+                      style={{ width: `${goalsProgressPercent}%` }}
+                    />
                   </div>
                 </div>
               </div>
