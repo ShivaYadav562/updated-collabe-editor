@@ -1,4 +1,6 @@
+
 require("dotenv").config();
+
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -18,10 +20,10 @@ const roomUsers = {};
 
 const app = express();
 
-//  CORS 
+// ================= CORS CONFIGURATION =================
 
 const allowedOrigins = [
-  // Current production frontend
+  // Production frontend
   "https://updated-collabe-editor.vercel.app",
 
   // Existing deployment URLs
@@ -34,12 +36,26 @@ const allowedOrigins = [
   "http://localhost:3000",
 ];
 
+// Allow only this project's Vercel preview deployments
+const isVercelPreview = (origin) => {
+  return /^https:\/\/updated-collabe-editor-[a-z0-9-]+-shivayadav562s-projects\.vercel\.app$/.test(
+    origin
+  );
+};
+
+// Common origin validation
+const isAllowedOrigin = (origin) => {
+  return (
+    allowedOrigins.includes(origin) ||
+    isVercelPreview(origin)
+  );
+};
+
+// Express CORS
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
+      if (!origin || isAllowedOrigin(origin)) {
         return callback(null, true);
       }
 
@@ -53,7 +69,7 @@ app.use(
 
 app.use(express.json());
 
-//  Routes 
+// ================= ROUTES =================
 
 app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
@@ -63,15 +79,21 @@ app.get("/test", (req, res) => {
   res.send("Server Working");
 });
 
-// HTTP Server 
+// ================= HTTP SERVER =================
 
 const server = http.createServer(app);
 
-// Socket.IO 
+// ================= SOCKET.IO =================
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin || isAllowedOrigin(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -110,6 +132,7 @@ io.on("connection", (socket) => {
 
     if (roomData) {
       socket.emit("receive_message", roomData.code || "");
+
       socket.emit(
         "language_change",
         roomData.language || "javascript"
@@ -119,45 +142,44 @@ io.on("connection", (socket) => {
 
   // CODE SYNC
   socket.on("send_message", async (data) => {
-  console.log("SEND_MESSAGE:", data);
+    console.log("SEND_MESSAGE:", data);
 
-  if (!data?.room || typeof data.message !== "string") return;
+    if (!data?.room || typeof data.message !== "string") return;
 
-  roomCode[data.room] = data.message;
+    roomCode[data.room] = data.message;
 
-  const updatedRoom = await Room.findOneAndUpdate(
-    { roomId: data.room },
-    { code: data.message },
-    { upsert: true, new: true }
-  );
+    const updatedRoom = await Room.findOneAndUpdate(
+      { roomId: data.room },
+      { code: data.message },
+      { upsert: true, new: true }
+    );
 
-  console.log("UPDATED ROOM:", updatedRoom);
+    console.log("UPDATED ROOM:", updatedRoom);
 
-  socket.emit("saved");
+    socket.emit("saved");
 
-  socket.to(data.room).emit("receive_message", data.message);
-});
-  
+    socket.to(data.room).emit("receive_message", data.message);
+  });
+
   // LANGUAGE SYNC
-socket.on("language_change", async (data) => {
-  if (!data?.room) return;
+  socket.on("language_change", async (data) => {
+    if (!data?.room) return;
 
-  roomLanguage[data.room] = data.language;
+    roomLanguage[data.room] = data.language;
 
- 
-  await Room.findOneAndUpdate(
-    { roomId: data.room },
-    {
-      language: data.language,
-    },
-    { upsert: true }
-  );
+    await Room.findOneAndUpdate(
+      { roomId: data.room },
+      {
+        language: data.language,
+      },
+      { upsert: true }
+    );
 
-  socket.to(data.room).emit(
-    "language_change",
-    data.language
-  );
-});
+    socket.to(data.room).emit(
+      "language_change",
+      data.language
+    );
+  });
 
   // CHAT
   socket.on("send_chat", ({ room, message }) => {
@@ -194,7 +216,7 @@ socket.on("language_change", async (data) => {
   });
 });
 
-// Start Server 
+// ================= START SERVER =================
 
 const PORT = process.env.PORT || 5000;
 
