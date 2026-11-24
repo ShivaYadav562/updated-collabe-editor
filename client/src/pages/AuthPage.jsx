@@ -4,7 +4,7 @@ import DotGlobe from "./DotGlobeBackground";
 
 
 const API_BASE =
-  "https://collabe-editor-backend.onrender.com/api/auth/";
+  "https://collabe-editor-backend.onrender.com/api/auth";
 
 const features = [
   { icon: "â–£", title: "Live Code Rooms", text: "Real-time collaboration", color: "violet" },
