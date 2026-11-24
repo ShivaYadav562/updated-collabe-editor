@@ -21,9 +21,15 @@ const app = express();
 //  CORS 
 
 const allowedOrigins = [
+  // Current production frontend
+  "https://updated-collabe-editor.vercel.app",
+
+  // Existing deployment URLs
   "https://updated-collabe-editor-7kwu.vercel.app",
-  "https://collab-editor-client.vercel.app", // Production
-  "https://collab-editor-client-t4o8.vercel.app", // Preview
+  "https://collab-editor-client.vercel.app",
+  "https://collab-editor-client-t4o8.vercel.app",
+
+  // Local development
   "http://localhost:5173",
   "http://localhost:3000",
 ];
